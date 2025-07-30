@@ -25,7 +25,7 @@ jobs:
           key: ${{ secrets.SSH_PI_KEY }}
           script: |
             # Navigate to the project directory on the server
-            cd ~/prisma
+            cd ~/prisma/react-prisma-pg1
 
             # Pull the latest changes
             git pull origin main

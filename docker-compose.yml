@@ -1,0 +1,57 @@
+version: "3.9"
+
+services:
+  # 1) Postgres database
+  postgres:
+    image: postgres:15-alpine
+    container_name: portfolio_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: stingerSTUNG618
+      POSTGRES_DB: portfolio_db
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d portfolio_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2) Migration job—runs once on db startup, then exits
+  migrate:
+    image: node:18-alpine
+    container_name: portfolio_migrate
+    working_dir: /usr/src/app
+    volumes:
+      - ./backend:/usr/src/app
+    env_file:
+      - ./backend/.env
+    command: >
+      sh -c "npx prisma migrate deploy --schema=prisma/schema.prisma"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # 3) Your API server—waits for migrations, then runs
+  backend:
+    build: ./backend
+    container_name: portfolio_backend
+    restart: unless-stopped
+    working_dir: /usr/src/app
+    volumes:
+      - ./backend:/usr/src/app
+    env_file:
+      - ./backend/.env
+    command: sh -c "node src/server.js"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    ports:
+      - "3001:3001"
+
+volumes:
+  postgres_data:

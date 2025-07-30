@@ -1,0 +1,46 @@
+name: Deploy Backend to Raspberry Pi
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "backend/**"
+      - "docker-compose.yml"
+      - ".github/workflows/deploy.yml"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Deploy to Raspberry Pi
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PI_HOST_IP }}
+          username: ${{ secrets.PI_USER }}
+          key: ${{ secrets.SSH_PI_KEY }}
+          script: |
+            # Navigate to the project directory on the server
+            cd ~/prisma
+
+            # Pull the latest changes
+            git pull origin main
+
+            # Create the production .env file for the backend
+            echo "Creating production .env file..."
+            {
+              echo "DATABASE_URL=${{ secrets.DATABASE_URL }}"
+              echo "PORT=3001"
+              echo "NODE_ENV=production"
+              echo "FRONTEND_URL=${{ secrets.FRONTEND_URL }}"
+              echo "LOG_LEVEL=info"
+            } > ./backend/.env
+
+            # Rebuild and restart services with Docker Compose
+            echo "Starting Docker containers..."
+            docker compose down
+            docker compose up -d --build

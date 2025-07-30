@@ -10,7 +10,7 @@ import blogRoutes from "./routes/blogRoutes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
 // Load environment variables
-dotenv.config({ path: ".env.local" });
+dotenv.config();
 
 // Initialize Prisma client
 const prisma = new PrismaClient();

@@ -1,12 +1,43 @@
 {
-  "name": "backend",
+  "name": "portfolio-backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Modern backend API for Portfolio Project with Express/Prisma/PostgreSQL",
+  "type": "module",
+  "main": "src/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:seed": "node prisma/seed.js",
+    "db:studio": "prisma studio",
+    "db:generate": "prisma generate",
+    "db:reset": "prisma migrate reset"
   },
-  "keywords": [],
+  "keywords": [
+    "portfolio",
+    "blog",
+    "api",
+    "express",
+    "prisma",
+    "postgresql"
+  ],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2",
+    "prisma": "^5.19.1",
+    "@prisma/client": "^5.19.1",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "dotenv": "^16.4.5",
+    "zod": "^3.23.8",
+    "winston": "^3.14.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4",
+    "eslint": "^9.9.1",
+    "prettier": "^3.3.3"
+  }
 }

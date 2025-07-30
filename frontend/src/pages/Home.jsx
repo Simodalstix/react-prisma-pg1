@@ -10,7 +10,7 @@ const Home = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-                Welcome to My Portfolio
+                Welcome to My Blog Demo Page
               </h1>
               <p className="text-xl md:text-2xl font-medium opacity-90">
                 A modern fullstack web application built with React, Node.js,

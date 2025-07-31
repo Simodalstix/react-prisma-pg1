@@ -21,16 +21,13 @@ services:
 
   # 2) Migration job—runs once on db startup, then exits
   migrate:
-    image: node:20
+    build: ./backend
     container_name: portfolio_migrate
     working_dir: /usr/src/app
-    volumes:
-      - ./backend:/usr/src/app
     env_file:
       - ./backend/.env
     command: >
-      sh -c "npm install &&
-             npx prisma generate --schema=prisma/schema.prisma &&
+      sh -c "npx prisma generate --schema=prisma/schema.prisma &&
              npx prisma migrate deploy --schema=prisma/schema.prisma"
     depends_on:
       postgres:

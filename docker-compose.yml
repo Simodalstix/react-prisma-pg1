@@ -19,21 +19,7 @@ services:
       timeout: 5s
       retries: 5
 
-  # 2) Migration job—runs once on db startup, then exits
-  migrate:
-    build: ./backend
-    container_name: portfolio_migrate
-    working_dir: /usr/src/app
-    env_file:
-      - ./backend/.env
-    command: >
-      sh -c "npx prisma generate --schema=prisma/schema.prisma &&
-             npx prisma migrate deploy --schema=prisma/schema.prisma"
-    depends_on:
-      postgres:
-        condition: service_healthy
-
-  # 3) Your API server—waits for migrations, then runs
+  # 2) Your API server—runs migrations then starts
   backend:
     build: ./backend
     container_name: portfolio_backend
@@ -43,9 +29,16 @@ services:
       - ./backend:/usr/src/app
     env_file:
       - ./backend/.env
+    command: >
+      sh -c "echo 'Starting backend with migrations...' &&
+             npx prisma generate --schema=prisma/schema.prisma &&
+             echo 'Prisma client generated' &&
+             npx prisma migrate deploy --schema=prisma/schema.prisma &&
+             echo 'Migrations completed, starting server...' &&
+             npm start"
     depends_on:
-      migrate:
-        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
     ports:
       - "3001:3001"
 

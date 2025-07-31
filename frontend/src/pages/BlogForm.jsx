@@ -16,6 +16,7 @@ const BlogForm = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState("");
 
   // Load post data for editing
   useEffect(() => {
@@ -41,15 +42,20 @@ const BlogForm = () => {
     setError(null);
 
     try {
+      let redirectId;
       if (isEditing) {
         await blogApi.updatePost(id, formData);
-        alert(SUCCESS_MESSAGES.POST_UPDATED);
-        navigate(`/blog/${id}`);
+        setSuccessMessage(SUCCESS_MESSAGES.POST_UPDATED);
+        redirectId = id;
       } else {
         const response = await blogApi.createPost(formData);
-        alert(SUCCESS_MESSAGES.POST_CREATED);
-        navigate(`/blog/${response.data.id}`);
+        setSuccessMessage(SUCCESS_MESSAGES.POST_CREATED);
+        redirectId = response.data.id;
       }
+
+      setTimeout(() => {
+        navigate(`/blog/${redirectId}`);
+      }, 2000); // Wait 2 seconds before redirecting
     } catch (err) {
       setError(err.message);
     } finally {
@@ -106,6 +112,7 @@ const BlogForm = () => {
         {/* Form */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           <form onSubmit={handleSubmit} className="p-8">
+            {/* Error Message */}
             {error && (
               <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
                 <div className="flex items-center">
@@ -113,6 +120,23 @@ const BlogForm = () => {
                   <div>
                     <h3 className="text-sm font-medium text-red-800">Error</h3>
                     <p className="text-sm text-red-700 mt-1">{error}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Success Message */}
+            {successMessage && (
+              <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div className="flex items-center">
+                  <div className="text-green-600 mr-3">✅</div>
+                  <div>
+                    <h3 className="text-sm font-medium text-green-800">
+                      Success
+                    </h3>
+                    <p className="text-sm text-green-700 mt-1">
+                      {successMessage}
+                    </p>
                   </div>
                 </div>
               </div>

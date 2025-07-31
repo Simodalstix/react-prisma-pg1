@@ -23,19 +23,17 @@ services:
   backend:
     build: ./backend
     container_name: portfolio_backend
-    restart: unless-stopped
+    restart: "no" # Change to 'no' for debugging so it doesn't restart endlessly
     working_dir: /usr/src/app
     volumes:
       - ./backend:/usr/src/app
     env_file:
       - ./backend/.env
+    # TEMPORARY COMMAND FOR DEBUGGING MIGRATIONS
     command: >
-      sh -c "echo 'Starting backend with migrations...' &&
+      sh -c "echo 'Attempting Prisma migrations...' &&
              npx prisma generate --schema=prisma/schema.prisma &&
-             echo 'Prisma client generated' &&
-             npx prisma migrate deploy --schema=prisma/schema.prisma &&
-             echo 'Migrations completed, starting server...' &&
-             npm start"
+             npx prisma migrate deploy --schema=prisma/schema.prisma"
     depends_on:
       postgres:
         condition: service_healthy

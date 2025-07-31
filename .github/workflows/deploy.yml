@@ -36,7 +36,7 @@ jobs:
               echo "DATABASE_URL=postgresql://postgres:stingerSTUNG618@postgres:5432/portfolio_db?schema=public"
               echo "PORT=3001"
               echo "NODE_ENV=production"
-              echo "FRONTEND_URL=${{ secrets.FRONTEND_URL }}"
+              echo "FRONTEND_URL=https://d1xexe26xrk3p5.cloudfront.net"
               echo "LOG_LEVEL=info"
             } > ./backend/.env
 

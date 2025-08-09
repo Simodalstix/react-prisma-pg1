@@ -33,12 +33,20 @@ jobs:
             # Create the production .env file for the backend
             echo "Creating production .env file..."
             {
-              echo "DATABASE_URL=postgresql://postgres:stingerSTUNG618@postgres:5432/portfolio_db?schema=public"
+              echo "DATABASE_URL=${{ secrets.DATABASE_URL }}"
               echo "PORT=3001"
               echo "NODE_ENV=production"
-              echo "FRONTEND_URL=https://d1xexe26xrk3p5.cloudfront.net"
+              echo "FRONTEND_URL=${{ secrets.FRONTEND_URL }}"
               echo "LOG_LEVEL=info"
             } > ./backend/.env
+
+            # Create the root .env file for docker-compose
+            echo "Creating docker-compose .env file..."
+            {
+              echo "POSTGRES_USER=postgres"
+              echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}"
+              echo "POSTGRES_DB=portfolio_db"
+            } > ./.env
 
             # Rebuild and restart services with Docker Compose
             echo "Starting Docker containers..."

@@ -1,0 +1,28 @@
+---
+# Default variables for pi_deploy role
+
+# Deployment configuration
+deploy_path: "/opt/portfolio"
+docker_compose_file: "docker-compose.yml"
+
+# Backend service configuration
+backend_port: 3001
+node_env: "production"
+
+# Database configuration
+postgres_user: "postgres"
+postgres_db: "portfolio_db"
+
+# ECR configuration (optional)
+use_ecr: false
+image_tag: "latest"
+
+# AWS configuration
+aws_region: "us-east-1"
+
+# SSM Parameter Store variables to fetch
+backend_env_vars:
+  - name: "/portfolio/postgres/password"
+    env_name: "POSTGRES_PASSWORD"
+  - name: "/portfolio/jwt/secret"
+    env_name: "JWT_SECRET"

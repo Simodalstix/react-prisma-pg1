@@ -1,0 +1,51 @@
+---
+- name: Log in to AWS ECR
+  shell: "aws ecr get-login-password --region {{ aws_region }} | docker login --username AWS --password-stdin {{ aws_account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com"
+  tags:
+    - ecr
+  when: use_ecr | default(false)
+
+- name: Pull latest backend Docker image from ECR
+  docker_image:
+    name: "{{ ecr_repository_uri }}:{{ image_tag | default('latest') }}"
+    source: pull
+    force_source: yes
+  tags:
+    - ecr
+  when: use_ecr | default(false)
+
+- name: Fetch environment variables from AWS SSM Parameter Store
+  aws_ssm_parameter_store:
+    name: "{{ item.name }}"
+    region: "{{ aws_region }}"
+  register: ssm_parameters
+  loop: "{{ backend_env_vars }}"
+  when: backend_env_vars is defined
+
+- name: Create backend environment file from template
+  template:
+    src: backend.env.j2
+    dest: "{{ deploy_path }}/.env"
+    mode: "0600"
+
+- name: Copy docker-compose.yml to deployment directory
+  copy:
+    src: "{{ docker_compose_file }}"
+    dest: "{{ deploy_path }}/docker-compose.yml"
+    mode: "0644"
+
+- name: Run docker compose up
+  docker_compose:
+    project_src: "{{ deploy_path }}"
+    state: present
+    pull: yes
+
+- name: Wait for backend service to be healthy
+  uri:
+    url: "http://localhost:{{ backend_port | default(3001) }}/health"
+    method: GET
+    status_code: 200
+  register: health_check
+  until: health_check.status == 200
+  retries: 30
+  delay: 10

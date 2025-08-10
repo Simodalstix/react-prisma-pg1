@@ -1,0 +1,39 @@
+---
+- name: Install Docker
+  become: true
+  apt:
+    name: docker.io
+    state: present
+    update_cache: yes
+
+- name: Install Docker Compose plugin
+  become: true
+  apt:
+    name: docker-compose-plugin
+    state: present
+
+- name: Install AWS CLI v2
+  become: true
+  block:
+    - name: Download AWS CLI installer
+      get_url:
+        url: "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip"
+        dest: "/tmp/awscliv2.zip"
+        mode: "0644"
+
+    - name: Unzip AWS CLI installer
+      unarchive:
+        src: "/tmp/awscliv2.zip"
+        dest: "/tmp"
+        remote_src: yes
+
+    - name: Install AWS CLI
+      command: /tmp/aws/install
+      args:
+        creates: /usr/local/bin/aws
+
+- name: Log in to AWS ECR
+  command: "aws ecr get-login-password --region {{ aws_region }} | docker login --username AWS --password-stdin {{ aws_account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com"
+  tags:
+    - ecr
+  when: use_ecr | default(false)

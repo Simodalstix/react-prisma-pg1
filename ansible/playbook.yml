@@ -1,0 +1,37 @@
+---
+- name: Bootstrap and Deploy Portfolio Application to Raspberry Pi
+  hosts: pi
+  become: yes
+  gather_facts: yes
+
+  vars:
+    # Override default variables here if needed
+    # aws_region: "us-west-2"
+    # use_ecr: true
+    # ecr_repository_uri: "123456789012.dkr.ecr.us-west-2.amazonaws.com/portfolio-backend"
+
+  pre_tasks:
+    - name: Update package cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Create deployment directory
+      file:
+        path: "{{ deploy_path | default('/opt/portfolio') }}"
+        state: directory
+        mode: "0755"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+
+  roles:
+    - pi_bootstrap
+    - pi_deploy
+
+  post_tasks:
+    - name: Display deployment status
+      debug:
+        msg: |
+          Portfolio application deployment completed!
+          Backend service should be available at: http://{{ ansible_host }}:{{ backend_port | default(3001) }}
+          Check service status with: docker compose -f {{ deploy_path | default('/opt/portfolio') }}/docker-compose.yml ps

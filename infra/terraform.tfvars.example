@@ -1,0 +1,16 @@
+project_name = "your-project-name"
+aws_region   = "us-east-1"
+
+# Optional: for custom domain
+# domain_name         = "your.domain.com"
+# acm_certificate_arn = "arn:aws:acm:us-east-1:123456789012:certificate/your-cert-id"
+
+# Optional: for ECR
+# ecr_repository_name = "your-ecr-repo-name"
+
+ssm_parameter_prefix = "your-app/production"
+
+app_secrets = {
+  "DATABASE_URL" = "your-database-url"
+  "API_KEY"      = "your-api-key"
+}

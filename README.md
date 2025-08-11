@@ -1,6 +1,6 @@
 # Fullstack Portfolio Project
 
-A modern fullstack web application demonstrating complete development workflow including frontend, backend, database, hosting, and CI/CD deployment.
+This project ships with CI/CD using GitHub Actions (build, test, and deploy). I’m extending it to full automation: the frontend will be provisioned with Terraform, and Jenkins will coordinate the end-to-end pipeline — from bare-metal/bootstrap through build, config, and deploy — so the entire stack can be recreated from zero with minimal manual steps.
 
 ## Technology Stack
 
@@ -92,6 +92,10 @@ FRONTEND_URL=http://localhost:3000
 VITE_API_BASE_URL=http://localhost:3001/api
 VITE_APP_NAME=Portfolio Project
 ```
+
+## Configuration
+
+**ECR Toggle**: This setting controls whether the CI/CD pipeline uses AWS ECR for Docker images. To disable ECR and use local Docker builds, set `enable_ecr = false` in the `infra/terraform.tfvars` file. When disabled, the deployment pipeline skips the image push to a registry. The default is `true`.
 
 ## API Endpoints
 

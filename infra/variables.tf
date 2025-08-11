@@ -26,14 +26,20 @@ variable "ssm_parameter_prefix" {
   type        = string
 }
 
-variable "ecr_repository_name" {
-  description = "The name of the ECR repository."
-  type        = string
-  default     = ""
+variable "enable_ecr" {
+  description = "A boolean to enable/disable ECR repository creation."
+  type        = bool
+  default     = false
 }
 
 variable "app_secrets" {
   description = "A map of secrets to be stored in SSM Parameter Store."
   type        = map(string)
   default     = {}
+}
+
+variable "jenkins_iam_role_arn" {
+  description = "The ARN of the Jenkins IAM role."
+  type        = string
+  default     = ""
 }

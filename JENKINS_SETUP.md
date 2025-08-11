@@ -88,14 +88,30 @@ Confirm the Jenkins URL. The default `http://localhost:8888/` should be correct.
 
 Your Jenkins setup is now ready!
 
-## 6. Credential Setup Placeholders
+## 6. Required Credentials Setup
 
-The following credentials will need to be created manually in Jenkins for the CI/CD pipeline to function correctly. You will create these later based on other instructions.
+> **IMPORTANT:** You must add the following credentials to the Jenkins GUI **before** you run the pipeline for the first time. The pipeline will fail without them.
 
-Navigate to **Manage Jenkins > Credentials > System > Global credentials (unrestricted)** and click **"Add Credentials"** for each of the following.
+This section provides a step-by-step guide to configure the necessary secrets in Jenkins.
 
-| ID                      | Type                          | Description                                 |
-| ----------------------- | ----------------------------- | ------------------------------------------- |
-| `aws-credentials`       | AWS Credentials               | For AWS CLI access.                         |
-| `pi-ssh-key`            | SSH Username with private key | For SSH access to the Raspberry Pi.         |
-| `dockerhub-credentials` | Username with password        | For logging into Docker Hub to push images. |
+### How to Add Credentials in Jenkins
+
+1.  From the Jenkins dashboard, navigate to **Manage Jenkins** in the left sidebar.
+2.  Click on **Credentials** under the "Security" section.
+3.  Under **Stores scoped to Jenkins**, click on the **(global)** domain.
+4.  Click **Add Credentials** in the left sidebar.
+5.  For each credential listed in the table below, select the correct **Kind** (e.g., "Secret text" or "SSH Username with private key").
+6.  Fill in the details exactly as specified in the table. The **ID** must match perfectly.
+7.  Click **Create**.
+
+Repeat this process for every credential in the table below.
+
+### Credentials Table
+
+| ID (`Credential ID`) | Kind (`Type`)                 | Description                             | Where to Find the Value                                                                                               |
+| -------------------- | ----------------------------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `aws_role_arn`       | Secret text                   | AWS IAM role ARN for Jenkins to assume. | This is the `jenkins_role_arn` output from your Terraform deployment.                                                 |
+| `aws_account_id`     | Secret text                   | Your AWS account ID.                    | You can find this in the AWS Management Console in the top-right corner under your account name.                      |
+| `pi_ssh_key`         | SSH Username with private key | Private key to access the Raspberry Pi. | **ID:** `pi_ssh_key`<br>**Username:** `pi`<br>**Private Key:** Check "Enter directly" and paste your SSH private key. |
+| `pi_host`            | Secret text                   | Raspberry Pi IP address or hostname.    | The local IP address of your Raspberry Pi (e.g., `192.168.1.10`).                                                     |
+| `pi_user`            | Secret text                   | Username for the Raspberry Pi.          | The user you SSH into the Pi with (e.g., `pi`).                                                                       |

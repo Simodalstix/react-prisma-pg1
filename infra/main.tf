@@ -113,7 +113,7 @@ resource "aws_iam_role" "jenkins" {
           # This should be updated with the correct principal for your Jenkins server
           # For example, an EC2 instance role or an AWS account.
           # Using a placeholder for now.
-          AWS = "arn:aws:iam::123456789012:root"
+          AWS = var.jenkins_iam_role_arn
         }
       }
     ]
@@ -160,7 +160,7 @@ data "aws_iam_policy_document" "jenkins_policy" {
   }
 
   dynamic "statement" {
-    for_each = var.ecr_repository_name != "" ? [1] : []
+    for_each = var.enable_ecr ? [1] : []
     content {
       sid = "ECRAccess"
       actions = [
@@ -203,9 +203,9 @@ resource "aws_ssm_parameter" "app_secrets" {
 }
 
 resource "aws_ecr_repository" "app" {
-  count = var.ecr_repository_name != "" ? 1 : 0
+  count = var.enable_ecr ? 1 : 0
 
-  name                 = var.ecr_repository_name
+  name                 = "${var.project_name}-app"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {

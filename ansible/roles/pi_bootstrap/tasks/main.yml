@@ -31,9 +31,3 @@
       command: /tmp/aws/install
       args:
         creates: /usr/local/bin/aws
-
-- name: Log in to AWS ECR
-  command: "aws ecr get-login-password --region {{ aws_region }} | docker login --username AWS --password-stdin {{ aws_account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com"
-  tags:
-    - ecr
-  when: use_ecr | default(false)

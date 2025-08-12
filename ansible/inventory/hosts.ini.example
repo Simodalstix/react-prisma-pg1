@@ -1,6 +1,6 @@
 [pi]
-raspberrypi ansible_host=192.168.1.100
+raspberrypi ansible_host=114.23.105.165
 
 [pi:vars]
-ansible_user=pi
+ansible_user=simoda
 ansible_ssh_private_key_file=~/.ssh/id_rsa

@@ -147,7 +147,7 @@ pipeline {
                 withCredentials([
                     sshUserPrivateKey(credentialsId: 'pi_ssh_key', keyFileVariable: 'PI_SSH_KEY_FILE'),
                     string(credentialsId: 'pi_host', variable: 'PI_HOST'),
-                    string(credentialsId: 'pi_user', variable: 'PI_USER')
+                    
                 ]) {
                     script {
                         sh '''
@@ -159,7 +159,7 @@ pipeline {
                             echo "${PI_HOST}" >> inventory.ini
 
                             ansible-playbook -i inventory.ini ansible/playbook.yml \\
-                                --user "${PI_USER}" \\
+                                --user "simoda" \\
                                 --private-key "${PI_SSH_KEY_FILE}" \\
                                 --extra-vars "use_ecr=${USE_ECR} image_tag=${IMAGE_TAG} backend_port=${BACKEND_PORT}"
                         '''
